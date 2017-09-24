@@ -3,19 +3,20 @@ package me.alikomi.endminecraft.tasks.others;
 import me.alikomi.endminecraft.utils.HttpReq;
 import me.alikomi.endminecraft.utils.Util;
 
+import java.io.IOException;
 import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
 
 public class GetALiKOMIIp extends Util {
-    public static Map<String, Proxy.Type> getALiKOMIIp(int maxAttack, Scanner sc) throws InterruptedException {
+    public static Map<String, Proxy.Type> getALiKOMIIp(int maxAttack, Scanner scanner) throws InterruptedException {
         boolean jy = true;
         String pass = "";
         String user = "";
         while (jy) {
             log("请输入账号（如果您没有账号的话，请去官网注册: http://proxy.alikomi.me/）");
-            user = sc.next();
+            user = scanner.nextLine();
             if (user.matches("[A-Za-z0-9_]*")) {
                 jy = false;
             }
@@ -23,12 +24,17 @@ public class GetALiKOMIIp extends Util {
         jy = true;
         while (jy) {
             log("请输入密码");
-            pass = sc.next();
+            pass = scanner.nextLine();
             if (pass.matches("[A-Za-z0-9_]*")) {
                 jy = false;
             }
         }
-        String re = HttpReq.sendPost("http://proxys.alikomi.me:9988/", "user=" + user + "&pass=" + pass);
+        String re = null;
+        try {
+            re = HttpReq.sendPost("http://proxys.alikomi.me:9988/", "user=" + user + "&pass=" + pass);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (re.contains("<static>") && re.contains("</static>")) {
             String status = re.substring(re.indexOf("<static>"), re.indexOf("</static>"));
             log(status);

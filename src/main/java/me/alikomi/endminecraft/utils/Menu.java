@@ -10,13 +10,13 @@ import java.util.Scanner;
 
 public class Menu extends Util {
     private String ip;
-    private Scanner sc;
+    private Scanner scanner;
     private int port;
 
     public Menu(Scanner sc, String ip, int port) {
         this.ip = ip;
         this.port = port;
-        this.sc = sc;
+        this.scanner = sc;
     }
 
     public void _1() {
@@ -28,51 +28,34 @@ public class Menu extends Util {
                 log("本服务器没有motdbug哦！可能本功能会无效，请选择其他功能吧~");
             }
         }
-        log("请输入攻击时间(单位：蛤)");//我就是这么暴力
-        int time = sc.nextInt() * 1000;
-        log("请输入线程数");
-        int thread = sc.nextInt();
+        log("请输入攻击时间(单位：蛤)(60)");//我就是这么暴力
+        int time = getCo(scanner.nextLine(),60)*1000;
+        log("请输入线程数(16)");
+        int thread = getCo(scanner.nextLine(),16);
         MotdAttack attack = new MotdAttack(ip, port, time, thread);
         attack.startAttack();
     }
 
     public void _2() throws IOException, InterruptedException {
-        log("分布式假人压测选择", "请输入攻击时长！(s)");
-        long time = sc.nextLong();
-        log("请输入最大攻击数");
-        int maxAttack = sc.nextInt();
+        log("分布式假人压测选择", "请输入攻击时长！(1000s)");
+        long time = getCo(scanner.nextLine(),1000);
+        log("请输入最大攻击数(10000)");
+        int maxAttack = getCo(scanner.nextLine(),10000);
         log("请输入每次加入服务器间隔(ms)");
-        int sleepTime = sc.nextInt();
+        int sleepTime = getCo(scanner.nextLine(),1);
+        log("请输入是否开启TAB攻击 y/n，默认开启(y)");
+        boolean tab = getCo(scanner.nextLine(),"y").equals("y");
+        log("请输入是否开启操死乐乐模式 y/n，默认关闭(n)");
+        boolean lele = getCo(scanner.nextLine(),"n").equals("y");
         Map<String, Proxy.Type> ips = getProxy(maxAttack);
-        DistributedBotAttack distributedBotAttack = new DistributedBotAttack(ip, port, time * 1000, sleepTime, ips);
+        DistributedBotAttack distributedBotAttack = new DistributedBotAttack(ip, port, time * 1000, sleepTime, ips,tab,lele);
         distributedBotAttack.startAttack();
     }
 
-    public void _3() {
-        log("请输入线程数");
-        int thread = sc.nextInt();
-        log("请输入攻击用户名");
-        String username = sc.next();
-        TabWithOneIp tabWithOneIp = new TabWithOneIp(ip, port, thread, username);
-        tabWithOneIp.startAttack();
-    }
-
-    public void _4() throws IOException, InterruptedException {
-        log("分布式MOTD压测选择", "请输入攻击时长(s)");
-        long time = sc.nextLong();
-        log("请输入最大攻击数");
-        int maxAttack = sc.nextInt();
-        log("请输入每次刷MOTD间隔(s)");
-        int sleepTime = sc.nextInt();
-        Map<String, Proxy.Type> ips = getProxy(maxAttack);
-        DistributedMotdAttack distributedMotdAttack = new DistributedMotdAttack(ip, port, time * 1000, sleepTime * 1000, ips);
-        distributedMotdAttack.startAttack();
-    }
-
     private Map<String, Proxy.Type> getProxy(int maxAttack) throws IOException, InterruptedException {
-        log("请输入代理ip列表获取方式：", "1.通过API获取", "2.通过本地获取", "3.官方获取");
+        log("请输入代理ip列表获取方式（2）：", "1.通过API获取", "2.通过本地获取", "3.官方获取");
         Map<String, Proxy.Type> ips;
-        switch (sc.nextInt()) {
+        switch (getCo(scanner.nextLine(),2)) {
             case 1: {
                 ips = getHttpIp(maxAttack);
                 break;
@@ -82,11 +65,11 @@ public class Menu extends Util {
                 break;
             }
             case 3: {
-                ips = getALiKOMIIp(maxAttack, sc);
+                ips = getALiKOMIIp(maxAttack, scanner);
                 break;
             }
             default: {
-                ips = getALiKOMIIp(maxAttack, sc);
+                ips = getHttpIp(maxAttack);
                 break;
             }
         }

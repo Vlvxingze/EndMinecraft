@@ -1,5 +1,6 @@
 package me.alikomi.endminecraft.utils;
 
+import me.alikomi.endminecraft.Main;
 import me.alikomi.endminecraft.tasks.others.GetALiKOMIIp;
 import me.alikomi.endminecraft.tasks.others.GetFileIp;
 import me.alikomi.endminecraft.tasks.others.GetHttpIp;
@@ -12,11 +13,13 @@ import java.util.Scanner;
 
 public class Util {
     public static void log(Object msg) {
+        Main.logger.put(msg.toString());
         System.out.println(msg);
     }
 
     public static void log(Object... msg) {
         for (Object o : msg) {
+            Main.logger.put(o.toString());
             System.out.println(o);
         }
     }
@@ -44,5 +47,18 @@ public class Util {
 
     protected static String getHttpReq(String url, String post, String type) {
         return HttpReq.sendPost(url, post, type);
+    }
+    public static <T> T getCo(String date, T def) {
+        if (date.equals("")) {
+            return def;
+        }
+        return (T) date;
+    }
+    public static int getCo (String date, int def) {
+        if (date.equals("")) {
+            return def;
+        }
+        return Integer.parseInt(date);
+
     }
 }

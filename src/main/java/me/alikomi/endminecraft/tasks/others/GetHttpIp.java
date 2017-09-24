@@ -2,6 +2,7 @@ package me.alikomi.endminecraft.tasks.others;
 
 import me.alikomi.endminecraft.utils.HttpReq;
 
+import java.io.IOException;
 import java.net.Proxy;
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +10,12 @@ import java.util.Map;
 public class GetHttpIp {
     public static Map<String, Proxy.Type> getHttpIp(int maxAttack) {
         Map<String, Proxy.Type> ips = new HashMap<>();
-        String req = HttpReq.sendPost("http://www.66ip.cn/mo.php?sxb=&tqsl=" + maxAttack + "&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=", "");
+        String req = null;
+        try {
+            req = HttpReq.sendPost("http://www.66ip.cn/mo.php?sxb=&tqsl=" + maxAttack + "&port=&export=&ktip=&sxa=&submit=%CC%E1++%C8%A1&textarea=", "");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         if (req != null && !req.equalsIgnoreCase("")) {
             String[] arr = req.split("<br />");
             int a = 0;
