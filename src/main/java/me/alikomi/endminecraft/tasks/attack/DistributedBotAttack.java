@@ -225,7 +225,6 @@ public class DistributedBotAttack extends Util {
                         String po = ipsKey.get(index);
 
                         while (!po.contains(":")) {
-                            log(":");
                             index++;
                             if (index >= ipsKey.size() - 1) {
                                 index = 0;
