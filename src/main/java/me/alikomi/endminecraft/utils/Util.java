@@ -23,6 +23,24 @@ public class Util {
             System.out.println(o);
         }
     }
+    public static byte[] subBytes(byte[] src, int begin, int count) {
+        byte[] bs = new byte[count];
+        System.arraycopy(src, begin, bs, 0, count);
+        return bs;
+    }
+
+    public static byte[] fb(byte[] old) {
+        if (old.length <= 0) {
+            log("1");
+            return old;
+        }
+        for (int i = old.length - 1; i >= 0; i--) {
+            if (old[i] != (byte) 0) {
+                return subBytes(old, 0, ++i);
+            }
+        }
+        return old;
+    }
 
     public static Map<String, Proxy.Type> getHttpIp(int maxAttack) {
         return GetHttpIp.getHttpIp(maxAttack);

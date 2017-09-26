@@ -18,9 +18,11 @@ public class ScanInfo extends Util {
         log("版本： " + motdData.getVersion());
         log("在线人数： " + motdData.getOnlinePlayers());
         log("最大人数： " + motdData.getMaxPlayers());
+        log("modlist:" + motdData.getModinfo().toString());
         Main.infoData.setServerVersion(motdData.getVersion());
         Main.infoData.setOnlinePlayer(motdData.getOnlinePlayers());
         Main.infoData.setMaxPlayer(motdData.getMaxPlayers());
+        Main.infoData.setModinfo(motdData.getModinfo());
     }
 
 }

@@ -9,6 +9,7 @@ public class GetMotdData {
     private JSONObject main;
     private JSONObject version;
     private JSONObject players;
+    private JSONObject modinfo;
 
     public GetMotdData(String returnjson) {
         this.jsondata = returnjson;
@@ -18,6 +19,9 @@ public class GetMotdData {
         }
         version = main.getJSONObject("version");
         players = main.getJSONObject("players");
+        if (main.containsKey("modinfo")) {
+            modinfo = main.getJSONObject("modinfo");
+        }
     }
 
     public String getVersion() {
@@ -95,5 +99,7 @@ public class GetMotdData {
         }
     }
 
-
+    public JSONObject getModinfo() {
+        return modinfo;
+    }
 }

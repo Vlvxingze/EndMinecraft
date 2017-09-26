@@ -3,6 +3,7 @@ package me.alikomi.endminecraft;
 import me.alikomi.endminecraft.data.BugData;
 import me.alikomi.endminecraft.data.InfoData;
 import me.alikomi.endminecraft.log.Loger;
+import me.alikomi.endminecraft.tasks.attack.TabWithOneIp;
 import me.alikomi.endminecraft.tasks.scan.ScanBug;
 import me.alikomi.endminecraft.tasks.scan.ScanInfo;
 import me.alikomi.endminecraft.utils.Menu;
@@ -11,6 +12,7 @@ import me.alikomi.endminecraft.utils.Util;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main extends Util {
@@ -76,7 +78,7 @@ public class Main extends Util {
     private static void showMenu() throws IOException, InterruptedException {
         Menu menu = new Menu(scanner, ip, port);
         while (true) {
-            log("请输入攻击方式：", "1 : MOTD攻击", "2 : 分布式假人攻击(集群压测)");
+            log("请输入攻击方式：", "1 : MOTD攻击", "2 : 分布式假人攻击(集群压测)","3 : 单ip，TAB压测","4 : 分布式Forge协议假人攻击(集群压测)");
             log("========================");
             switch (getCo(scanner.nextLine(),2)) {
                 case 1: {
@@ -85,6 +87,14 @@ public class Main extends Util {
                 }
                 case 2: {
                     menu._2();
+                    break;
+                }
+                case 3: {
+                    menu._3();
+                    break;
+                }
+                case 4: {
+                    menu._4();
                     break;
                 }
                 default: {

