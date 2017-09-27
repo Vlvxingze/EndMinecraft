@@ -19,7 +19,7 @@ public class GetModList extends Util{
         if (list == null) get(2);
         return list;
     }
-    public Map<String,String> get(int id) {
+    private Map<String,String> get(int id) {
         switch (id) {
             case 1: {
                 log("开始get");

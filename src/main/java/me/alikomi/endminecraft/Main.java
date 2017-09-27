@@ -3,7 +3,6 @@ package me.alikomi.endminecraft;
 import me.alikomi.endminecraft.data.BugData;
 import me.alikomi.endminecraft.data.InfoData;
 import me.alikomi.endminecraft.log.Loger;
-import me.alikomi.endminecraft.tasks.attack.TabWithOneIp;
 import me.alikomi.endminecraft.tasks.scan.ScanBug;
 import me.alikomi.endminecraft.tasks.scan.ScanInfo;
 import me.alikomi.endminecraft.utils.Menu;
@@ -12,14 +11,10 @@ import me.alikomi.endminecraft.utils.Util;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Main extends Util {
 
-    private final static String version = "1.2.1";
-
-    public static String minecraftVersion = "1.8";
     public static BugData bugData = null;
     public static InfoData infoData = null;
     public static Loger logger = new Loger(new File("log/"+System.currentTimeMillis()+".log"));
@@ -42,7 +37,6 @@ public class Main extends Util {
         if (args == null || args.length == 0) {
             return;
         }
-        minecraftVersion = args[0];
     }
 
     private static void getInfo() {
