@@ -9,7 +9,6 @@ import me.alikomi.endminecraft.utils.Menu;
 import me.alikomi.endminecraft.utils.Util;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Scanner;
@@ -18,7 +17,7 @@ public class Main extends Util {
 
     public static BugData bugData = null;
     public static InfoData infoData = null;
-    public static Loger logger = new Loger(new File("log/" + System.currentTimeMillis() + ".log"));
+    public static Loger logger;
 
     private static String ip;
     public static int port = 25565;
@@ -27,17 +26,12 @@ public class Main extends Util {
 
 
     public static void main(String[] args) throws InterruptedException, IOException, IllegalAccessException, InstantiationException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException {
-        setProgram(args);
+        if (! new File("log").exists()) new File("log").mkdir();
+        logger = new Loger(new File("log/" + System.currentTimeMillis() + ".log"));
         getInfo();
         scanServer();
         scanBug();
         showMenu();
-    }
-
-    private static void setProgram(String[] args) throws InterruptedException, FileNotFoundException {
-        if (args == null || args.length == 0) {
-            return;
-        }
     }
 
     private static void getInfo() {

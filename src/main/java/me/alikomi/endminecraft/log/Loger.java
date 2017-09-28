@@ -1,10 +1,7 @@
 package me.alikomi.endminecraft.log;
 
-import me.alikomi.endminecraft.Main;
-
 import java.io.*;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
