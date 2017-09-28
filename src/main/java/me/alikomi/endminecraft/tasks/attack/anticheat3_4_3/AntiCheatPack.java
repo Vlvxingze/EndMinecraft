@@ -27,12 +27,10 @@ public class AntiCheatPack extends Util {
         A.set(null, sv);
         Method method = antiCheatMod.getClass().getDeclaredMethod("Method40", Object.class);
         if (!method.isAccessible()) method.setAccessible(true);
-
         Object jym = method.invoke(antiCheatMod, hashSet);
         if (jym == null) {
             log("NULL！");
         }
-        log("JYM: " + jym);
         return (String) jym;
     }
 

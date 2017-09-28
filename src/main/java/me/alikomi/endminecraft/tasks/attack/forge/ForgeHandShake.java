@@ -29,11 +29,7 @@ public class ForgeHandShake extends Util {
         log(new String(data));
 
         if (packet.getChannel().equalsIgnoreCase("AntiCheat3.4.3")) {
-            client.getSession().send(new ClientPluginMessagePacket("REGISTER", "AntiCheat3.4.3".getBytes()));
-            String ap = AntiCheatPack.jy(packet.getData());
-            byte[] apb = AntiCheatPack.acPackmk(ap);
-            client.getSession().send(new ClientPluginMessagePacket("AntiCheat3.4.3", apb));
-            log("已发送");
+            client.getSession().send(new ClientPluginMessagePacket("AntiCheat3.4.3", AntiCheatPack.acPackmk(AntiCheatPack.jy(packet.getData()))));
         }
 
         if (!packet.getChannel().contains("FML") && !packet.getChannel().contains("REGISTER")) return;
