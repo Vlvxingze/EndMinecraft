@@ -92,7 +92,8 @@ public class DistributedBotAttack extends Util implements DistributedAttack{
             public void disconnected(DisconnectedEvent disconnectedEvent) {
                 String msg = disconnectedEvent.getReason();
                 if (msg.contains("refused") || msg.contains("here") || !isAttack) return;
-                log("Bot " + mc.getProfile().getName() + " 断开连接： " + msg);
+                Throwable t = disconnectedEvent.getCause();
+                log("用户 " + mc.getProfile().getName() + "断开连接： " + msg + (t == null ? "" : t.toString()));
             }
         });
         if (lele) new Thread(() -> getMotd(proxy,ip,port)).start();

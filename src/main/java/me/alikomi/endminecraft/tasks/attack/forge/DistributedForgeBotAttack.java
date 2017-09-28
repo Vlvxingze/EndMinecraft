@@ -13,6 +13,7 @@ import org.spacehq.packetlib.Client;
 import org.spacehq.packetlib.event.session.*;
 import org.spacehq.packetlib.tcp.TcpSessionFactory;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.*;
@@ -81,7 +82,11 @@ public class DistributedForgeBotAttack extends Util implements DistributedAttack
         client.getSession().addListener(new SessionListener() {
             public void packetReceived(PacketReceivedEvent packetReceivedEvent) {
                 if (packetReceivedEvent.getPacket() instanceof ServerPluginMessagePacket) {
-                    forgeHandShake.start(packetReceivedEvent.getPacket());
+                    try {
+                        forgeHandShake.start(packetReceivedEvent.getPacket());
+                    } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | NoSuchFieldException e) {
+                        e.printStackTrace();
+                    }
                 }
                 if (packetReceivedEvent.getPacket() instanceof ServerJoinGamePacket) {
                     Attack_util.regAndLogin(client);

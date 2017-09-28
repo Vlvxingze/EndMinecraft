@@ -1,23 +1,33 @@
 package me.alikomi.endminecraft;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import me.alikomi.endminecraft.data.BugData;
 import me.alikomi.endminecraft.data.InfoData;
 import me.alikomi.endminecraft.log.Loger;
+import me.alikomi.endminecraft.tasks.attack.forge.ForgeHandShake;
 import me.alikomi.endminecraft.tasks.scan.ScanBug;
 import me.alikomi.endminecraft.tasks.scan.ScanInfo;
+import me.alikomi.endminecraft.utils.DefinedPacket;
 import me.alikomi.endminecraft.utils.Menu;
 import me.alikomi.endminecraft.utils.Util;
+import net.saralab.anticheat.Class5;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Scanner;
 
 public class Main extends Util {
 
     public static BugData bugData = null;
     public static InfoData infoData = null;
-    public static Loger logger = new Loger(new File("log/"+System.currentTimeMillis()+".log"));
+    public static Loger logger = new Loger(new File("log/" + System.currentTimeMillis() + ".log"));
 
     private static String ip;
     public static int port = 25565;
@@ -25,7 +35,7 @@ public class Main extends Util {
     private static Scanner scanner = new Scanner(System.in);
 
 
-    public static void main(String[] args) throws InterruptedException, IOException, IllegalAccessException, InstantiationException {
+    public static void main(String[] args) throws InterruptedException, IOException, IllegalAccessException, InstantiationException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException {
         setProgram(args);
         getInfo();
         scanServer();
@@ -49,7 +59,7 @@ public class Main extends Util {
             port = Integer.parseInt(tmpip[1]);
         } else {
             log("请输入端口(25565)");
-            port = getCo(scanner.nextLine(),25565);
+            port = getCo(scanner.nextLine(), 25565);
         }
         infoData = new InfoData(ip, port);
     }
@@ -72,9 +82,9 @@ public class Main extends Util {
     private static void showMenu() throws IOException, InterruptedException {
         Menu menu = new Menu(scanner, ip, port);
         while (true) {
-            log("请输入攻击方式：", "1 : MOTD攻击", "2 : 分布式假人攻击(集群压测)","3 : 单ip，TAB压测","4 : 分布式Forge协议假人攻击(集群压测)");
+            log("请输入攻击方式：", "1 : MOTD攻击", "2 : 分布式假人攻击(集群压测)", "3 : 单ip，TAB压测", "4 : 分布式Forge协议假人攻击(集群压测)");
             log("========================");
-            switch (getCo(scanner.nextLine(),2)) {
+            switch (getCo(scanner.nextLine(), 2)) {
                 case 1: {
                     menu._1();
                     break;

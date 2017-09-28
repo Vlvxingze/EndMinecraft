@@ -5,6 +5,8 @@ import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 import lombok.RequiredArgsConstructor;
 
+import java.io.EOFException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -54,11 +56,7 @@ public abstract class DefinedPacket extends Util {
     }
 
     public static byte[] readArray(ByteBuf buf, int limit) {
-        int len = readVarInt(buf);
-        if (len > limit) {
-            log(String.format("Cannot receive byte array longer than %s (got %s bytes)", limit, len));
-        }
-        byte[] ret = new byte[len];
+        byte[] ret = new byte[limit];
         buf.readBytes(ret);
         return ret;
     }
