@@ -1,26 +1,17 @@
 package me.alikomi.endminecraft;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.Unpooled;
 import me.alikomi.endminecraft.data.BugData;
 import me.alikomi.endminecraft.data.InfoData;
 import me.alikomi.endminecraft.log.Loger;
-import me.alikomi.endminecraft.tasks.attack.forge.ForgeHandShake;
 import me.alikomi.endminecraft.tasks.scan.ScanBug;
 import me.alikomi.endminecraft.tasks.scan.ScanInfo;
-import me.alikomi.endminecraft.utils.DefinedPacket;
 import me.alikomi.endminecraft.utils.Menu;
 import me.alikomi.endminecraft.utils.Util;
-import net.saralab.anticheat.Class5;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Scanner;
 
 public class Main extends Util {
