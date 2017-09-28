@@ -30,7 +30,7 @@ public class ForgeHandShake extends Util {
 
         if (packet.getChannel().equalsIgnoreCase("AntiCheat3.4.3")) {
             client.getSession().send(new ClientPluginMessagePacket("REGISTER", "AntiCheat3.4.3".getBytes()));
-            String ap = "4e1aa591588345058b5e410a8ab649c2,6eae52086b5fd2c75e7f05dbb4e7152e," + AntiCheatPack.jy(packet.getData());
+            String ap = AntiCheatPack.jy(packet.getData());
             byte[] apb = AntiCheatPack.acPackmk(ap);
             client.getSession().send(new ClientPluginMessagePacket("AntiCheat3.4.3", apb));
             log("已发送");
