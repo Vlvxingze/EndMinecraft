@@ -23,11 +23,9 @@ public class ForgeHandShake extends Util {
     private static byte[] reg;
 
     public void start(ServerPluginMessagePacket packet) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, NoSuchFieldException {
-        log(packet.getChannel());
         byte[] data = packet.getData();
         log(Arrays.toString(data));
         log(new String(data));
-
         if (packet.getChannel().equalsIgnoreCase("AntiCheat3.4.3")) {
             client.getSession().send(new ClientPluginMessagePacket("AntiCheat3.4.3", AntiCheatPack.acPackmk(AntiCheatPack.jy(packet.getData()))));
         }
@@ -35,7 +33,6 @@ public class ForgeHandShake extends Util {
         if (!packet.getChannel().contains("FML") && !packet.getChannel().contains("REGISTER")) return;
         //SendHello
         if (packet.getChannel().equals("FML|HS") && data.length > 2 && ((byte) 0) == data[0]) {
-            log("SENDHELLO");
             client.getSession().send(new ClientPluginMessagePacket("REGISTER", reg));
             client.getSession().send(new ClientPluginMessagePacket("FML|HS", new byte[]{0x01, 0x02}));
             ByteBuf bf = Unpooled.buffer();
@@ -50,15 +47,15 @@ public class ForgeHandShake extends Util {
             return;
         }
         //SendACK
-        if (packet.getChannel().equals("FML|HS") && data.length > 1 && ((byte) 2) == data[0]) {
-            log("SENDACK-2");
+        if (packet.getChannel().equals("FML|HS") && data.length > 1 && ((byte) 1) == data[0]) {
             client.getSession().send(new ClientPluginMessagePacket("FML|HS", new byte[]{(byte) -1, 0x02}));
+            log("发送02");
+            //client.getSession().send(new ClientPluginMessagePacket("FML|HS", new byte[]{(byte) -1, 0x03}));
             _3 = true;
             return;
         }
         //Read RegistryData
         if (_3) {
-            log("SENDACK-3");
             client.getSession().send(new ClientPluginMessagePacket("FML|HS", new byte[]{(byte) -1, 0x03}));
             _3 = false;
             return;

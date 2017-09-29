@@ -1,5 +1,6 @@
 package me.alikomi.endminecraft;
 
+import javassist.*;
 import me.alikomi.endminecraft.data.BugData;
 import me.alikomi.endminecraft.data.InfoData;
 import me.alikomi.endminecraft.log.Loger;
@@ -25,13 +26,38 @@ public class Main extends Util {
     private static Scanner scanner = new Scanner(System.in);
 
 
-    public static void main(String[] args) throws InterruptedException, IOException, IllegalAccessException, InstantiationException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException {
+    public static void main(String[] args) throws InterruptedException, IOException, IllegalAccessException, InstantiationException, NoSuchFieldException, NoSuchMethodException, InvocationTargetException, NotFoundException, CannotCompileException {
+        init();
         if (! new File("log").exists()) new File("log").mkdir();
         logger = new Loger(new File("log/" + System.currentTimeMillis() + ".log"));
         getInfo();
         scanServer();
         scanBug();
         showMenu();
+    }
+    private static void init() throws NotFoundException, CannotCompileException {
+        CtClass ctClass = new ClassPool(true).get("org.spacehq.mc.protocol.packet.ingame.server.ServerPluginMessagePacket");
+        String method_old_name = "read";
+        CtMethod method_old = ctClass.getDeclaredMethod(method_old_name);
+        String method_new_name = method_old_name +"$impl";
+        method_old.setName(method_new_name);
+        CtMethod method_new = CtNewMethod.copy(method_old,method_old_name,ctClass,null);
+        StringBuilder code = new StringBuilder();
+        code.append("{");
+        code.append("    this.channel = $1.readString();");
+        code.append("    int l;");
+        code.append("    if (channel.contains(\"FML\") || channel.contains(\"FORGE\")) {");
+        code.append("       l = $1.available();");
+        code.append("       System.out.println(channel);");
+        code.append("    } else {");
+        code.append("       l = $1.readShort();");
+        code.append("       System.out.println(channel);");
+        code.append("    }");
+        code.append("    this.data = $1.readBytes(l);");
+        code.append("}");
+        method_new.setBody(code.toString());
+        ctClass.addMethod(method_new);
+        ctClass.toClass();
     }
 
     private static void getInfo() {

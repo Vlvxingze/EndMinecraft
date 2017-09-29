@@ -5,8 +5,6 @@ import com.google.common.base.Preconditions;
 import io.netty.buffer.ByteBuf;
 import lombok.RequiredArgsConstructor;
 
-import java.io.EOFException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;

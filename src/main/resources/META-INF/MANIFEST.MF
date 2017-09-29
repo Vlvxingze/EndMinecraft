@@ -1,3 +1,4 @@
 Manifest-Version: 1.0
-Main-Class: me.alikomi.endminecraft.Main
 Class-Path: libraries/Protocol.jar
+Main-Class: me.alikomi.endminecraft.Main
+
