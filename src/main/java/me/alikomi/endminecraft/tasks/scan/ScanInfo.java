@@ -18,12 +18,15 @@ public class ScanInfo extends Util {
         log("版本： " + motdData.getVersion());
         log("在线人数： " + motdData.getOnlinePlayers());
         log("最大人数： " + motdData.getMaxPlayers());
-        log("modlist:" + motdData.getModinfo().toString());
-        if (motdData.getModinfo().toString().contains("AntiCheat")) log("含有AntiCheatMod！");
+
         Main.infoData.setServerVersion(motdData.getVersion());
         Main.infoData.setOnlinePlayer(motdData.getOnlinePlayers());
         Main.infoData.setMaxPlayer(motdData.getMaxPlayers());
-        Main.infoData.setModinfo(motdData.getModinfo());
+        if (data.contains("modList")) {
+            Main.infoData.setModinfo(motdData.getModinfo());
+            log("modlist:" + motdData.getModinfo().toString());
+            if (motdData.getModinfo().toString().contains("AntiCheat")) log("含有AntiCheatMod！");
+        }
     }
 
 }

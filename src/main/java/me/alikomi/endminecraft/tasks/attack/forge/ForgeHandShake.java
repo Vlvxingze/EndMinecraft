@@ -20,6 +20,7 @@ public class ForgeHandShake extends Util {
     private final Map<String, String> modlist;
 
     private static boolean _3 = false;
+    private static boolean _2 = false;
     private static byte[] reg;
 
     public void start(ServerPluginMessagePacket packet) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException, NoSuchFieldException {
@@ -44,14 +45,16 @@ public class ForgeHandShake extends Util {
             });
 
             client.getSession().send(new ClientPluginMessagePacket("FML|HS", fb(bf.array())));
+            _2 = true;
             return;
         }
         //SendACK
-        if (packet.getChannel().equals("FML|HS") && data.length > 1 && ((byte) 1) == data[0]) {
+        if (_2) {
             client.getSession().send(new ClientPluginMessagePacket("FML|HS", new byte[]{(byte) -1, 0x02}));
             log("发送02");
             //client.getSession().send(new ClientPluginMessagePacket("FML|HS", new byte[]{(byte) -1, 0x03}));
             _3 = true;
+            _2 = false;
             return;
         }
         //Read RegistryData

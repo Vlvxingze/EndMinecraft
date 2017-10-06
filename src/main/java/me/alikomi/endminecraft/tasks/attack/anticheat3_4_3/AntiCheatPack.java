@@ -31,6 +31,7 @@ public class AntiCheatPack extends Util {
         if (jym == null) {
             log("NULL！");
         }
+        log(jym);
         return (String) jym;
     }
 

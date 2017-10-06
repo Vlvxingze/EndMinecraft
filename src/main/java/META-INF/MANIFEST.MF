@@ -1,4 +1,0 @@
-Manifest-Version: 1.0
-Class-Path: libraries/mc.jar
-Main-Class: me.alikomi.endminecraft.Main
-

